@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/realtyflow';
+    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/realtyflow';
 
     const conn = await mongoose.connect(mongoURI, {
       // Modern Mongoose doesn't need these options, but keeping for compatibility
