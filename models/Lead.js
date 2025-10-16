@@ -40,18 +40,41 @@ const leadSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  notes: {
+  score: {
+    type: Number,
+    min: [0, 'Score cannot be negative'],
+    max: [100, 'Score cannot be more than 100']
+  },
+  priority: {
     type: String,
-    maxlength: [1000, 'Notes cannot be more than 1000 characters']
+    enum: ['low', 'medium', 'high', 'hot']
+  },
+  engagementScore: {
+    type: Number,
+    min: [0, 'Engagement score cannot be negative'],
+    max: [100, 'Engagement score cannot be more than 100']
   },
   budget: {
     type: Number,
     min: [0, 'Budget cannot be negative']
   },
-  preferredLocation: {
+  preferredPropertyType: {
     type: String,
     trim: true,
-    maxlength: [200, 'Location cannot be more than 200 characters']
+    maxlength: [100, 'Property type cannot be more than 100 characters']
+  },
+  timeline: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Timeline cannot be more than 100 characters']
+  },
+  aiInsights: [{
+    type: String,
+    maxlength: [500, 'AI insight cannot be more than 500 characters']
+  }],
+  notes: {
+    type: String,
+    maxlength: [1000, 'Notes cannot be more than 1000 characters']
   }
 }, {
   timestamps: true, // Adds createdAt and updatedAt
