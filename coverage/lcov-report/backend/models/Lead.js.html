@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>14/16</span>
+                <span class='fraction'>10/15</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/4</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>14/16</span>
+                <span class='fraction'>10/15</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -173,10 +173,9 @@
 <a name='L108'></a><a href='#L108'>108</a>
 <a name='L109'></a><a href='#L109'>109</a>
 <a name='L110'></a><a href='#L110'>110</a>
-<a name='L111'></a><a href='#L111'>111</a>
-<a name='L112'></a><a href='#L112'>112</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L111'></a><a href='#L111'>111</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -259,33 +258,32 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span></td><td class="text"><pre class="prettyprint lang-js">const mongoose = require('mongoose');
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">const mongoose = require('mongoose');
 &nbsp;
 const leadSchema = new mongoose.Schema({
   name: {
@@ -370,14 +368,13 @@ const leadSchema = new mongoose.Schema({
 });
 &nbsp;
 // Index for better query performance
-leadSchema.index({ email: 1 });
 leadSchema.index({ status: 1 });
 leadSchema.index({ assignedTo: 1 });
 leadSchema.index({ createdAt: -1 });
 &nbsp;
 // Virtual for days since last contact
-leadSchema.virtual('daysSinceLastContact').get(function() {
-  return Math.floor((Date.now() - this.lastContacted) / (1000 * 60 * 60 * 24));
+leadSchema.virtual('daysSinceLastContact').get(<span class="fstat-no" title="function not covered" >fu</span>nction() {
+<span class="cstat-no" title="statement not covered" >  return Math.floor((Date.now() - this.lastContacted) / (1000 * 60 * 60 * 24));</span>
 });
 &nbsp;
 // Instance method to update last contacted
@@ -387,13 +384,13 @@ leadSchema.methods.updateLastContacted = <span class="fstat-no" title="function 
 };
 &nbsp;
 // Static method to get leads by status
-leadSchema.statics.getLeadsByStatus = function(status) {
-  return this.find({ status });
+leadSchema.statics.getLeadsByStatus = <span class="fstat-no" title="function not covered" >fu</span>nction(status) {
+<span class="cstat-no" title="statement not covered" >  return this.find({ status });</span>
 };
 &nbsp;
 // Static method to get leads by agent
-leadSchema.statics.getLeadsByAgent = function(agentName) {
-  return this.find({ assignedTo: agentName });
+leadSchema.statics.getLeadsByAgent = <span class="fstat-no" title="function not covered" >fu</span>nction(agentName) {
+<span class="cstat-no" title="statement not covered" >  return this.find({ assignedTo: agentName });</span>
 };
 &nbsp;
 module.exports = mongoose.model('Lead', leadSchema);</pre></td></tr></table></pre>
@@ -403,7 +400,7 @@ module.exports = mongoose.model('Lead', leadSchema);</pre></td></tr></table></pr
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-16T08:02:09.381Z
+                at 2025-10-16T11:24:08.298Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

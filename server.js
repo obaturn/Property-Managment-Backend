@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const connectDB = require('./config/database');
 
@@ -13,8 +14,16 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Routes - Always register routes regardless of how the module is loaded
 app.use('/api/leads', require('./routes/leads'));
+app.use('/api/properties', require('./routes/properties'));
+console.log('Routes registered successfully');
+console.log('Available routes:');
+console.log('- /api/leads');
+console.log('- /api/properties');
 
 // Basic route
 app.get('/', (req, res) => {
@@ -27,6 +36,16 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     message: 'RealtyFlow API is running',
     timestamp: new Date().toISOString(),
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
 
