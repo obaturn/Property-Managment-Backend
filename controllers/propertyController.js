@@ -1,4 +1,6 @@
 const Property = require('../models/Property');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // @desc    Get all properties
 // @route   GET /api/properties
@@ -81,7 +83,62 @@ const getProperty = async (req, res) => {
 // @access  Private
 const createProperty = async (req, res) => {
   try {
-    const property = await Property.create(req.body);
+    let propertyData = req.body;
+
+    // Handle FormData requests (when files are uploaded)
+    if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
+      // Parse the JSON data from FormData
+      if (req.body.data) {
+        try {
+          propertyData = JSON.parse(req.body.data);
+        } catch (error) {
+          console.error('Error parsing property data:', error);
+          return res.status(400).json({
+            success: false,
+            message: 'Invalid property data format'
+          });
+        }
+      }
+    }
+
+    // Handle file uploads if files are present
+    if (req.files && req.files.length > 0) {
+      const uploadedFiles = [];
+
+      for (const file of req.files) {
+        try {
+          // Upload to Cloudinary
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: 'realtyflow/properties',
+            resource_type: 'auto', // Auto-detect image/video
+            public_id: `property_${Date.now()}_${file.filename}`,
+            transformation: [
+              { width: 1200, height: 800, crop: 'limit' }, // Resize for web
+              { quality: 'auto' } // Auto quality optimization
+            ]
+          });
+
+          uploadedFiles.push({
+            url: result.secure_url,
+            public_id: result.public_id,
+            type: file.mimetype.startsWith('video/') ? 'video' : 'image',
+            filename: file.filename,
+            size: file.size,
+            uploadedAt: new Date()
+          });
+        } catch (uploadError) {
+          console.error('Cloudinary upload error:', uploadError);
+          // Continue with other files if one fails
+        }
+      }
+
+      // Set the uploaded files as the property images
+      if (uploadedFiles.length > 0) {
+        propertyData.images = uploadedFiles;
+      }
+    }
+
+    const property = await Property.create(propertyData);
 
     res.status(201).json({
       success: true,
@@ -201,14 +258,42 @@ const uploadPropertyFiles = async (req, res) => {
       });
     }
 
-    // Process uploaded files
-    const uploadedFiles = files.map(file => ({
-      url: `/uploads/${file.filename}`,
-      type: file.mimetype.startsWith('video/') ? 'video' : 'image',
-      filename: file.filename,
-      size: file.size,
-      uploadedAt: new Date()
-    }));
+    // Upload files to Cloudinary
+    const uploadedFiles = [];
+
+    for (const file of files) {
+      try {
+        // Upload to Cloudinary
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: 'realtyflow/properties',
+          resource_type: 'auto', // Auto-detect image/video
+          public_id: `${propertyId}_${Date.now()}_${file.filename}`,
+          transformation: [
+            { width: 1200, height: 800, crop: 'limit' }, // Resize for web
+            { quality: 'auto' } // Auto quality optimization
+          ]
+        });
+
+        uploadedFiles.push({
+          url: result.secure_url,
+          public_id: result.public_id,
+          type: file.mimetype.startsWith('video/') ? 'video' : 'image',
+          filename: file.filename,
+          size: file.size,
+          uploadedAt: new Date()
+        });
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        // Continue with other files if one fails
+      }
+    }
+
+    if (uploadedFiles.length === 0) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload any files to Cloudinary'
+      });
+    }
 
     // Add files to property
     if (!property.images) {
@@ -220,7 +305,7 @@ const uploadPropertyFiles = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: `${files.length} file(s) uploaded successfully`,
+      message: `${uploadedFiles.length} file(s) uploaded successfully`,
       data: uploadedFiles
     });
   } catch (error) {

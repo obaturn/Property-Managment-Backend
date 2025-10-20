@@ -15,7 +15,7 @@ const { uploadMultiple } = require('../middleware/upload');
 
 router.route('/')
   .get(getProperties)
-  .post(createProperty);
+  .post(uploadMultiple, createProperty);
 
 router.route('/:id')
   .get(getProperty)

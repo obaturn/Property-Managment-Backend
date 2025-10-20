@@ -1,15 +1,30 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-// Create uploads directory if it doesn't exist
+// Create uploads directory if it doesn't exist (for temporary storage before Cloudinary upload)
 const uploadsDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Storage configuration
-const storage = multer.diskStorage({
+// Cloudinary storage configuration
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'realtyflow/properties',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'avi'],
+    transformation: [
+      { width: 1200, height: 800, crop: 'limit' },
+      { quality: 'auto' }
+    ]
+  }
+});
+
+// Local storage configuration (temporary, before uploading to Cloudinary)
+const localStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
   },
@@ -30,9 +45,19 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Upload middleware
-const upload = multer({
-  storage: storage,
+// Upload middleware for local storage (temporary before Cloudinary)
+const localUpload = multer({
+  storage: localStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit
+    files: 20 // Maximum 20 files
+  }
+});
+
+// Upload middleware for direct Cloudinary upload
+const cloudinaryUpload = multer({
+  storage: cloudinaryStorage,
   fileFilter: fileFilter,
   limits: {
     fileSize: 50 * 1024 * 1024, // 50MB limit
@@ -42,8 +67,11 @@ const upload = multer({
 
 // Export different upload configurations
 module.exports = {
-  upload,
-  uploadSingle: upload.single('file'),
-  uploadMultiple: upload.array('files', 20),
+  localUpload,
+  cloudinaryUpload,
+  uploadSingle: localUpload.single('file'),
+  uploadMultiple: localUpload.array('files', 20),
+  cloudinarySingle: cloudinaryUpload.single('file'),
+  cloudinaryMultiple: cloudinaryUpload.array('files', 20),
   uploadsDir
 };
