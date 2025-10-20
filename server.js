@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const http = require('http');
 require('dotenv').config();
 const connectDB = require('./config/database');
+const socketService = require('./services/socketService');
 
 // Cloudinary configuration
 const cloudinary = require('cloudinary').v2;
@@ -13,7 +15,11 @@ cloudinary.config({
 });
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
+
+// Initialize Socket.IO
+socketService.initialize(server);
 
 // Connect to database
 connectDB();
@@ -29,11 +35,17 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/leads', require('./routes/leads'));
 app.use('/api/properties', require('./routes/properties'));
 app.use('/api/meetings', require('./routes/meetings'));
+app.use('/api/booking', require('./routes/booking'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/agents', require('./routes/agents'));
 console.log('Routes registered successfully');
 console.log('Available routes:');
 console.log('- /api/leads');
 console.log('- /api/properties');
 console.log('- /api/meetings');
+console.log('- /api/booking');
+console.log('- /api/auth');
+console.log('- /api/agents');
 
 // Basic route
 app.get('/', (req, res) => {
@@ -59,12 +71,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// For testing purposes, export the app
-module.exports = app;
+// For testing purposes, export the app and server
+module.exports = { app, server };
 
 // Start server only when this file is run directly
 if (require.main === module) {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    console.log(`WebSocket server initialized`);
   });
 }

@@ -17,9 +17,13 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "googleapis": "^164.0.0",
     "mongoose": "^8.19.1",
     "multer": "^2.0.2",
-    "multer-storage-cloudinary": "^4.0.0"
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^7.0.9",
+    "socket.io": "^4.8.1",
+    "twilio": "^5.10.3"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

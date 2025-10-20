@@ -75,6 +75,16 @@ const leadSchema = new mongoose.Schema({
   notes: {
     type: String,
     maxlength: [1000, 'Notes cannot be more than 1000 characters']
+  },
+  // Webhook integration fields
+  externalId: {
+    type: String,
+    sparse: true // Allow null values but ensure uniqueness when present
+  },
+  sourceSystem: {
+    type: String,
+    enum: ['REA', 'website', 'crm', 'zapier', 'api', 'other'],
+    default: 'website'
   }
 }, {
   timestamps: true, // Adds createdAt and updatedAt

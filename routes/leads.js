@@ -7,7 +7,9 @@ const {
   updateLead,
   deleteLead,
   updateLeadStatus,
-  getLeadsByStatus
+  getLeadsByStatus,
+  handleWebhookLead,
+  getWebhookLogs
 } = require('../controllers/leadController');
 
 // All routes require authentication (middleware would be added here)
@@ -28,4 +30,9 @@ router.route('/:id/status')
 router.route('/status/:status')
   .get(getLeadsByStatus);
 
+// Webhook routes
+router.post('/webhook', handleWebhookLead);
+router.get('/webhook/logs', getWebhookLogs);
+
+module.exports = router;
 module.exports = router;
